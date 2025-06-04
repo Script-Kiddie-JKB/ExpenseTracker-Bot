@@ -323,16 +323,26 @@ if __name__ == "__main__":
         app.add_handler(CommandHandler("monthly", get_monthly))
         app.add_handler(CommandHandler("help", help_cmd))
 
-        # Button callbacks
+        # Callback queries
         app.add_handler(CallbackQueryHandler(handle_split_or_owe, pattern="^(split|owe)\|"))
         app.add_handler(CallbackQueryHandler(handle_settle_now, pattern="^settle_now$"))
         app.add_handler(CallbackQueryHandler(clear_all, pattern="^clear_all$"))
         app.add_handler(CallbackQueryHandler(show_shared, pattern="^show_shared$"))
 
-        print("✅ Bot is running...")
         await app.initialize()
         await app.start()
-        await app.updater.start_polling()
-        await app.updater.idle()
+        await app.bot.set_my_commands([
+            ("start", "Start the bot"),
+            ("add", "Add a personal expense"),
+            ("shared", "Add a shared expense"),
+            ("settle", "Settle shared expenses"),
+            ("show", "Show shared expense history"),
+            ("daily", "Daily expense summary"),
+            ("weekly", "Weekly expense summary"),
+            ("15days", "15-day summary"),
+            ("monthly", "Monthly summary"),
+            ("help", "Show help")
+        ])
+        print("✅ Bot is running on Render...")
+        await app.run_polling()
 
-    asyncio.run(main())
