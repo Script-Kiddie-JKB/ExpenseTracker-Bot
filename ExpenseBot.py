@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 nest_asyncio.apply()
 
 # --- Credentials ---
-BOT_TOKEN = "7623303228:AAHis7SnBeoKBf_OgjInQ2zHgMgyhe6l0tk"
+BOT_TOKEN = "7623303228:AAFPmqYh5AZVRatoFkJZu7OFrbzsBcpiOC8"
 MONGO_URI = "mongodb+srv://serverai:cph72XQJKCu0KYPj@telegram.chqaipi.mongodb.net/?retryWrites=true&w=majority&appName=Telegram"
 
 # --- Mongo Setup ---
