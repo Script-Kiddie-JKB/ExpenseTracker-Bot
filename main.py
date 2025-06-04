@@ -9,7 +9,7 @@ from pymongo import MongoClient
 from datetime import datetime, timedelta
 
 from bot_commands import (
-    start, add, shared, handle_split_or_owe, get_monthly,
+    start, add, shared, handle_split_or_owe, handle_settle_now, get_monthly,
     settle, show_shared, help_cmd,
     daily, weekly, fifteen
 )
