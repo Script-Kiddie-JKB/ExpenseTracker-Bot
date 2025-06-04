@@ -14,7 +14,11 @@ nest_asyncio.apply()
 # --- ENV Credentials ---
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 MONGO_URI = os.getenv("MONGO_URI")
-RENDER_URL = os.getenv("RENDER_URL", "https://your-app-name.onrender.com")  # Replace
+RENDER_URL = os.getenv("RENDER_URL", "https://expensetracker-bot.onrender.com")  # Replace
+
+# --- Webhook Setup ---
+application = Application.builder().token(BOT_TOKEN).build()
+
 
 # --- MongoDB Setup ---
 client = MongoClient(MONGO_URI)
@@ -265,19 +269,32 @@ application.add_handler(CallbackQueryHandler(clear_all, pattern="^clear_all$"))
 application.add_handler(CallbackQueryHandler(show_shared, pattern="^show_shared$"))
 
 web_app = web.Application()
-web_app.router.add_post("/webhook", lambda req: webhook(req))
 
+# 🔧 FIX: Webhook Handler with proper initialization
 async def webhook(request):
+    if not application.initialized:
+        await application.initialize()  # 🔧 Important fix
     data = await request.json()
     update = Update.de_json(data, application.bot)
     await application.process_update(update)
     return web.Response()
 
+web_app.router.add_post("/webhook", webhook)
+
+# 🔧 Properly start application and set webhook
 async def on_startup(app):
+    await application.initialize()  # 🔧 Ensure app is initialized
     await application.bot.delete_webhook()
     await application.bot.set_webhook(f"{RENDER_URL}/webhook")
+    await application.start()  # 🔧 Starts polling/processing logic
+
+async def on_cleanup(app):
+    await application.stop()
+    await application.shutdown()
+    await application.post_stop()
 
 web_app.on_startup.append(on_startup)
+web_app.on_cleanup.append(on_cleanup)
 
 if __name__ == "__main__":
     web.run_app(web_app, port=int(os.environ.get("PORT", 8080)))
