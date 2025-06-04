@@ -54,7 +54,6 @@ application.add_handler(CommandHandler("15days", fifteen))
 application.add_handler(CommandHandler("monthly", get_monthly))
 application.add_handler(CommandHandler("help", help_cmd))
 application.add_handler(CallbackQueryHandler(handle_split_or_owe, pattern="^(split|owe)\|"))
-application.add_handler(CallbackQueryHandler(handle_settle_now, pattern="^settle_now$"))
 application.add_handler(CallbackQueryHandler(clear_all, pattern="^clear_all$"))
 application.add_handler(CallbackQueryHandler(show_shared, pattern="^show_shared$"))
 
