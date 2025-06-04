@@ -274,6 +274,7 @@ async def webhook(request):
     return web.Response()
 
 async def on_startup(app):
+    await application.bot.delete_webhook()
     await application.bot.set_webhook(f"{RENDER_URL}/webhook")
 
 web_app.on_startup.append(on_startup)
