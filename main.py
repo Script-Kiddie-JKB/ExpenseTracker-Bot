@@ -58,7 +58,9 @@ app.add_handler(CommandHandler("help", help_cmd))
 app.add_handler(CallbackQueryHandler(handle_split_or_owe, pattern="^(split|owe)\|"))
 app.add_handler(CallbackQueryHandler(handle_settle_now, pattern="^settle_now$"))
 app.add_handler(CallbackQueryHandler(clear_all, pattern="^clear_all$"))
-app.add_handler(CallbackQueryHandler(show_shared, pattern="^show_shared$")
+app.add_handler(CallbackQueryHandler(show_shared, pattern="^show_shared$"))
+
+print("✅ Bot is running...")
 # --- AIOHTTP App ---
 web_app = web.Application()
 web_app.router.add_post(f'/{WEBHOOK_SECRET}', webhook_handler)
