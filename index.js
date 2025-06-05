@@ -1,16 +1,25 @@
 require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
 const { MongoClient } = require('mongodb');
+const express = require('express');
 
-// Load environment variables
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const MONGO_URI = process.env.MONGO_URI;
 
-// Initialize MongoDB client
-const client = new MongoClient(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+const express = require('express');
+const app = express();
 
-// Connect to MongoDB
+const PORT = process.env.PORT || 3000;
+
+app.get('/', (req, res) => res.send('Bot is running'));
+
+app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
+
+
+// MongoDB setup
+const client = new MongoClient(MONGO_URI);
 let db;
+
 client.connect().then(() => {
     db = client.db('expense_bot');
     console.log('Connected to MongoDB');
@@ -18,7 +27,7 @@ client.connect().then(() => {
     console.error('Error connecting to MongoDB:', err);
 });
 
-// Initialize Telegram bot
+// Telegram bot setup
 const bot = new TelegramBot(BOT_TOKEN, { polling: true });
 
 // Helper function to format date as YYYY-MM-DD
