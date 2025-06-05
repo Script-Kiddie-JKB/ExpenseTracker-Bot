@@ -6,7 +6,6 @@ const express = require('express');
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const MONGO_URI = process.env.MONGO_URI;
 
-const express = require('express');
 const app = express();
 
 const PORT = process.env.PORT || 3000;
