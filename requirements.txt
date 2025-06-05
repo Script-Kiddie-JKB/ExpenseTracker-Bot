@@ -1,4 +1,0 @@
-python-telegram-bot[webhooks]==20.7
-pymongo
-nest_asyncio
-aiohttp
