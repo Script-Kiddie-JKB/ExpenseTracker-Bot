@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 
 from bot_commands import (
     start, add, shared, handle_split_or_owe, handle_settle_now, get_monthly,
-    settle, show_shared, help_cmd,
+    settle, show_shared, help_cmd, clear_all,
     daily, weekly, fifteen
 )
 
@@ -53,6 +53,12 @@ app.add_handler(CommandHandler("weekly", weekly))
 app.add_handler(CommandHandler("15days", fifteen))
 app.add_handler(CommandHandler("monthly", get_monthly))
 app.add_handler(CommandHandler("help", help_cmd))
+
+from bot_commands import (
+    start, add, shared, settle, handle_split_or_owe, handle_settle_now, get_monthly,
+    show_shared, help_cmd, clear_all,
+    daily, weekly, fifteen
+)
 
         # Button callbacks
 app.add_handler(CallbackQueryHandler(handle_split_or_owe, pattern="^(split|owe)\|"))

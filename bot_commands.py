@@ -240,6 +240,7 @@ async def clear_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
     shared_expenses.delete_many({"user_id": user_id})
     await update.callback_query.answer()
     await update.callback_query.edit_message_text("✅ All your shared expenses cleared.")
+    await update.callback_query.edit_message_text("All your expenses have been cleared.")
 
 
 
