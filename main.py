@@ -31,13 +31,13 @@ shared_expenses = db.shared_expenses
 # --- Telegram Webhook Route ---
 async def webhook_handler(request):
     update = await request.json()
-    await application.update_queue.put(Update.de_json(update, application.bot))
+    await app.update_queue.put(Update.de_json(update, app.bot))
     return web.Response()
 
 # --- Telegram Bot Init ---
 async def on_startup(app):
     webhook_url = f"https://{os.environ['RENDER_EXTERNAL_HOSTNAME']}/{WEBHOOK_SECRET}"
-    await application.bot.set_webhook(webhook_url)
+    await app.bot.set_webhook(webhook_url)
     print("✅ Webhook set:", webhook_url)
 
 app = Application.builder().token(BOT_TOKEN).build()
