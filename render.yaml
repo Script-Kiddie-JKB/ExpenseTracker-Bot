@@ -12,3 +12,5 @@ services:
         value: mongodb+srv://serverai:cph72XQJKCu0KYPj@telegram.chqaipi.mongodb.net/?retryWrites=true&w=majority&appName=Telegram
       - key: WEBHOOK_SECRET
         value: secret123
+      - key: RENDER_EXTERNAL_HOSTNAME
+        value: expensetracker-bot.onrender.com  # ⚠️ Replace with your actual service URL

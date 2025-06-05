@@ -1,48 +1,44 @@
+# main.py
 import os
-import nest_asyncio
 from telegram import Update
 from telegram.ext import (
-    Application, CommandHandler, ContextTypes, CallbackQueryHandler
+    Application,
+    CommandHandler,
+    ContextTypes,
+    CallbackQueryHandler,
 )
-from aiohttp import web
 from pymongo import MongoClient
-from datetime import datetime, timedelta
 
 from bot_commands import (
-    start, add, shared, handle_split_or_owe, handle_settle_now, get_monthly,
-    settle, show_shared, help_cmd, clear_all,
-    daily, weekly, fifteen
+    start,
+    add,
+    shared,
+    handle_split_or_owe,
+    handle_settle_now,
+    get_monthly,
+    settle,
+    show_shared,
+    help_cmd,
+    clear_all,
+    daily,
+    weekly,
+    fifteen,
 )
 
-nest_asyncio.apply()
-
-# --- Load env vars (or use os.environ) ---
-BOT_TOKEN = os.environ.get("BOT_TOKEN", "YOUR_BOT_TOKEN")
-MONGO_URI = os.environ.get("MONGO_URI", "YOUR_MONGO_URI")
+# Load environment
+BOT_TOKEN      = os.environ["BOT_TOKEN"]
+MONGO_URI      = os.environ["MONGO_URI"]
 WEBHOOK_SECRET = os.environ.get("WEBHOOK_SECRET", "secretpath")
-PORT = int(os.environ.get("PORT", "10000"))
+PORT           = int(os.environ.get("PORT", "10000"))
+HOSTNAME       = os.environ["RENDER_EXTERNAL_HOSTNAME"]
 
-# --- MongoDB Setup ---
-client = MongoClient(MONGO_URI)
-db = client.expense_bot
-expenses = db.expenses
-shared_expenses = db.shared_expenses
+# Mongo client (shared with bot_commands.py, but this ensures the DB is awake)
+MongoClient(MONGO_URI)
 
-# --- Telegram Webhook Route ---
-async def webhook_handler(request):
-    update = await request.json()
-    await app.update_queue.put(Update.de_json(update, app.bot))
-    return web.Response()
-
-# --- Telegram Bot Init ---
-async def on_startup(app):
-    webhook_url = f"https://{os.environ['RENDER_EXTERNAL_HOSTNAME']}/{WEBHOOK_SECRET}"
-    await app.bot.set_webhook(webhook_url)
-    print("✅ Webhook set:", webhook_url)
-
+# Build the Application
 app = Application.builder().token(BOT_TOKEN).build()
 
-# Register Handlers
+# Register command handlers
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler("add", add))
 app.add_handler(CommandHandler("shared", shared))
@@ -54,24 +50,23 @@ app.add_handler(CommandHandler("15days", fifteen))
 app.add_handler(CommandHandler("monthly", get_monthly))
 app.add_handler(CommandHandler("help", help_cmd))
 
-from bot_commands import (
-    start, add, shared, settle, handle_split_or_owe, handle_settle_now, get_monthly,
-    show_shared, help_cmd, clear_all,
-    daily, weekly, fifteen
-)
-
-        # Button callbacks
+# Register callback/query handlers
 app.add_handler(CallbackQueryHandler(handle_split_or_owe, pattern="^(split|owe)\|"))
 app.add_handler(CallbackQueryHandler(handle_settle_now, pattern="^settle_now$"))
 app.add_handler(CallbackQueryHandler(clear_all, pattern="^clear_all$"))
 app.add_handler(CallbackQueryHandler(show_shared, pattern="^show_shared$"))
 
-print("✅ Bot is running...")
-# --- AIOHTTP App ---
-web_app = web.Application()
-web_app.router.add_post(f'/{WEBHOOK_SECRET}', webhook_handler)
-web_app.on_startup.append(on_startup)
+if __name__ == "__main__":
+    # Build your public webhook URL
+    webhook_url = f"https://{HOSTNAME}/{WEBHOOK_SECRET}"
+    print("▶️ Starting webhook server on port", PORT)
+    print("▶️ Setting Telegram webhook to:", webhook_url)
 
-# --- Run Aiohttp App ---
-if __name__ == '__main__':
-    web.run_app(web_app, port=PORT)
+    # run_webhook spins up its own aiohttp server,
+    # sets the webhook for you, and binds to PORT.
+    app.run_webhook(
+        listen="0.0.0.0",
+        port=PORT,
+        url_path=WEBHOOK_SECRET,
+        webhook_url=webhook_url,
+    )
